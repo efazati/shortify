@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="row column">
+  <p>اکر لینک تلگرام خود را در اینستاگرام میخواهید بگذارید کافیست آدرس را در فرم زیر اضافه کنید و نتیجه را ذخیره کنید</p>
+
+  	{% if code %}
+  	<div>آدرس جدید: <a href="http://c0o.ir{{url_for('.redirect_page', code=code)}}">http://c0o.ir{{url_for('.redirect_page', code=code)}}</a></div>
+  	{% endif %}
+  	<form action="/shorten" method="post"> 
+        <input name='url' type="search" placeholder="جستجو">
+        <input type="submit" value="ارسال">
+
+    </form>
+</div>
+{% endblock content %}
