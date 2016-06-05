@@ -31,9 +31,8 @@ def shorten() :
 
 @app.route('/<code>')
 def redirect_page(code) :
-    #url = col.find_and_modify({'code' : code}, {'$inc' : {'v' : 1}})['url']
-    return
-    return redirect(code)
+    url = col.find_and_modify({'code' : code}, {'$inc' : {'v' : 1}})['url']
+    return redirect(url)
 
 def is_valid_url(url):
     regex = re.compile(
