@@ -2,12 +2,17 @@
 {% block content %}
 
 <div class="row column">
+    {% if error %}
+    <div>Error: {{error}}</div>
+    {% endif %}
+    {% if short_code %}
+    <div>Short Address: <a href="{{short_code}}">{{short_code}}</a></div>
+    {% endif %}
+</div>
+<hr>
+<div class="row column">
   <p>URL:</p>
-
-  	{% if code %}
-  	<div>New Address: <a href="short_url">short_url</a></div>
-  	{% endif %}
-  	<form action="/shorten" method="post"> 
+  	<form action="/shortify" method="post">
         <input name='url' type="search" placeholder="Search">
         <input class="button" type="submit" value="Submit">
 

@@ -25,6 +25,12 @@ def run(config_path=None):
 
 
 async def create_app(config, envs):
+    """
+    Init all dependencies and put their instances in app object
+    :param config: object
+    :param envs: object
+    :return: app
+    """
     app = web.Application()
     app['config'] = config
     app['envs'] = envs
@@ -48,11 +54,16 @@ async def configure_redis(app):
         await pool.wait_closed()
 
     app.on_cleanup.append(close_redis)
-    app['redis_pool'] = pool
+    app['redis'] = pool
     return pool
 
 
 async def configure_modules(app):
+    """
+    Based on what is defined in config, this function will load modules.
+    :param app:
+    :return:
+    """
     modules = app['config']['modules']
 
     for module_config in modules:
@@ -85,10 +96,12 @@ def configure_logging(app):
     http_logger.setLevel(logging.DEBUG)
     http_logger.propagate = True
 
+
 def configure_static(app):
     app.router.add_static(
         '/static/', path=str(app['envs']['PROJECT_ROOT'] / 'static'),
         name='static')
+
 
 if __name__ == '__main__':
     import argparse
