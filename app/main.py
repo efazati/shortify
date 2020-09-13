@@ -1,30 +1,22 @@
 import logging
-import pathlib
 
 import aiohttp_jinja2
 import aioredis
 import jinja2
 from aiohttp import web
 
-from app.settings import load_config
+from app.settings import load_config, load_envs
 
 log = logging.getLogger(__name__)
-
-PROJECT_ROOT = pathlib.Path(__file__).parent.parent
-TEMPLATES_ROOT = pathlib.Path(__file__).parent / 'templates'
 
 
 def run(config_path=None):
     config = load_config(config_path)
-    envs = {
-        "PROJECT_ROOT": PROJECT_ROOT,
-        "TEMPLATES_ROOT": TEMPLATES_ROOT
-    }
-    app = create_app(config, envs)
+    app = create_app(config)
     web.run_app(app, port=config['port'])
 
 
-async def create_app(config, envs):
+async def create_app(config):
     """
     Init all dependencies and put their instances in app object
     :param config: object
@@ -33,12 +25,12 @@ async def create_app(config, envs):
     """
     app = web.Application()
     app['config'] = config
-    app['envs'] = envs
+    app['envs'] = load_envs()
     await configure_modules(app)
     await configure_redis(app)
-    configure_jinja(app)
-    configure_logging(app)
-    configure_static(app)
+    await configure_jinja(app)
+    await configure_logging(app)
+    await configure_static(app)
 
     return app
 
@@ -67,18 +59,19 @@ async def configure_modules(app):
     modules = app['config']['modules']
 
     for module_config in modules:
+        # @TODO Should improve this section with `Nested applications` https://docs.aiohttp.org/en/v2.3.2/web.html#nested-applications
         module = __import__('app.modules.%s.routes' % module_config['name'], fromlist=['routes'])
         module.routes(app, module_config)
 
 
-def configure_jinja(app):
+async def configure_jinja(app):
     aiohttp_jinja2.setup(
         app,
         loader=jinja2.PackageLoader('app'),
     )
 
 
-def configure_logging(app):
+async def configure_logging(app):
     log_level = app['config']['log_level']
     logging.basicConfig()
 
@@ -87,8 +80,8 @@ def configure_logging(app):
     logger.setLevel(log_level)
     app.logger = logger
     app.logger.info('Starting project')
-    app.logger.debug(f"Template root: {TEMPLATES_ROOT}")
-    app.logger.debug(f"Project root: {PROJECT_ROOT}")
+    app.logger.debug(f"Template root: {app['envs']['TEMPLATES_ROOT']}")
+    app.logger.debug(f"Project root: {app['envs']['PROJECT_ROOT']}")
     app.logger.debug(app['config'])
 
     logging.getLogger().setLevel(log_level)
@@ -97,9 +90,9 @@ def configure_logging(app):
     http_logger.propagate = True
 
 
-def configure_static(app):
+async def configure_static(app):
     app.router.add_static(
-        '/static/', path=str(app['envs']['PROJECT_ROOT'] / 'static'),
+        '/static/', path=str(app['envs']['APP_ROOT'] / 'static'),
         name='static')
 
 

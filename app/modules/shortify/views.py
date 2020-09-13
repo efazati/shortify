@@ -1,7 +1,7 @@
-import short_url
 import aiohttp_jinja2
 from aiohttp import web
 
+from app.modules.shortify.models import shortify_url, longify_url
 from app.utils.url import is_url_valid
 
 
@@ -24,21 +24,16 @@ class ViewsHandler:
 
         url = form.get('url')
         if not is_url_valid(url):
-            # raise web.HTTPBadRequest()
-            # return 400, {"error": "url is not valid"}
-            return aiohttp_jinja2.render_template('index.html', request, {"error": "url is not valid"}, status=400)
-        index = await self._app["redis"].incr(f"{self._redis_prefix}:count")
-        short_code = short_url.encode_url(int(index))
-        key = f"{self._redis_prefix}:{short_code}"
-        await self._app["redis"].set(key, url)
-        print(short_code)
+            context = {"error": "url is not valid"}
+            return aiohttp_jinja2.render_template('index.html', request, context, status=400)
+        short_code = await shortify_url(self._app['redis'], self._redis_prefix, url)
         return {'short_code': short_code}
 
     @aiohttp_jinja2.template('index.html')
     async def unshortify(self, request):
         short_code = request.match_info['short_code']
-        key = f"{self._redis_prefix}:{short_code}"
-        location = await self._app["redis"].get(key)
-        if not location:
+        url = await longify_url(self._app['redis'], self._redis_prefix, short_code)
+
+        if not url:
             raise web.HTTPNotFound()
-        return web.HTTPFound(location=location.decode())
+        return web.HTTPFound(location=url.decode())
