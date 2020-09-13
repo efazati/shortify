@@ -1,5 +1,7 @@
 import re
 
+from aiohttp import web
+
 
 def is_url_valid(url):
     regex = re.compile(
@@ -14,5 +16,8 @@ def is_url_valid(url):
 
 def url_maker(url_prefix, path):
     if url_prefix:
-        return '/'.join([url_prefix, path])
+        return ''.join([url_prefix, path])
     return path
+
+def healthy(request):
+    return web.json_response({"status": "healthy"})

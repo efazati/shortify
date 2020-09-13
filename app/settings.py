@@ -4,11 +4,11 @@ import yaml
 
 PROJECT_ROOT = pathlib.Path(__file__).parent.parent
 APP_ROOT = pathlib.Path(__file__).parent
-DEFAULT_CONFIG_PATH = APP_ROOT / 'configs' / 'base_config.yaml'
+DEFAULT_CONFIG_PATH = APP_ROOT / 'configs' / 'base_config.yml'
 TEMPLATES_ROOT = APP_ROOT / 'templates'
 
 
-def load_config(config_path="None"):
+def load_config(config_path=None):
     if not config_path:
         config_path = DEFAULT_CONFIG_PATH
     with open(config_path, 'rt') as f:

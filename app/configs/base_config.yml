@@ -8,3 +8,5 @@ redis:
 
 modules:
   - name: shortify
+  - name: core
+    url_prefix: /core

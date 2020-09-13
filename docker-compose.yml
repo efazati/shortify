@@ -1,0 +1,31 @@
+version: "3.5"
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - "./app:/app"
+    environment:
+      - REDIS_HOST=redis
+    links:
+      - redis
+    ports:
+      - 8000:8000
+
+  tests:
+    links:
+      - redis_test
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - REDIS_HOST=redis_test
+    command: ["python3", "-m", "tests/test.py"]
+
+  redis_test:
+    image: redis:6.0
+
+  redis:
+    image: redis:6.0

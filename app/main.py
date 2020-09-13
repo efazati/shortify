@@ -1,4 +1,5 @@
 import logging
+import os
 
 import aiohttp_jinja2
 import aioredis
@@ -6,14 +7,9 @@ import jinja2
 from aiohttp import web
 
 from app.settings import load_config, load_envs
+from app.utils.url import healthy
 
 log = logging.getLogger(__name__)
-
-
-def run(config_path=None):
-    config = load_config(config_path)
-    app = create_app(config)
-    web.run_app(app, port=config['port'])
 
 
 async def create_app(config):
@@ -36,10 +32,9 @@ async def create_app(config):
 
 
 async def configure_redis(app):
-    pool = await aioredis.create_redis_pool((
-        app['config']['redis']['host'],
-        app['config']['redis']['port']
-    ))
+    redis_port = os.environ.get('REDIS_PORT', None) or app['config']['redis']['port']
+    redis_host = os.environ.get('REDIS_HOST', None) or app['config']['redis']['host']
+    pool = await aioredis.create_redis_pool((redis_host, redis_port))
 
     async def close_redis(app):
         pool.close()
@@ -80,9 +75,6 @@ async def configure_logging(app):
     logger.setLevel(log_level)
     app.logger = logger
     app.logger.info('Starting project')
-    app.logger.debug(f"Template root: {app['envs']['TEMPLATES_ROOT']}")
-    app.logger.debug(f"Project root: {app['envs']['PROJECT_ROOT']}")
-    app.logger.debug(app['config'])
 
     logging.getLogger().setLevel(log_level)
     http_logger = logging.getLogger("aiohttp.client")
@@ -94,6 +86,12 @@ async def configure_static(app):
     app.router.add_static(
         '/static/', path=str(app['envs']['APP_ROOT'] / 'static'),
         name='static')
+
+
+def run(config_path=None):
+    config = load_config(config_path)
+    app = create_app(config)
+    web.run_app(app, port=config['port'])
 
 
 if __name__ == '__main__':

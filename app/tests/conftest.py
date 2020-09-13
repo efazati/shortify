@@ -10,7 +10,7 @@ BASE_DIR = pathlib.Path(__file__).parent.parent
 
 @pytest.fixture
 async def client(aiohttp_client):
-    config = load_config(BASE_DIR / 'configs' / 'base_config.yaml')
+    config = load_config()
     app = await create_app(config)
     await preload_data(app)
     return await aiohttp_client(app)
