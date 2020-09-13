@@ -1,0 +1,10 @@
+package_name: 'shortify'
+port: 8000
+log_level: DEBUG
+
+redis:
+  host: 'localhost'
+  port: 6379
+
+modules:
+  - name: shortify
