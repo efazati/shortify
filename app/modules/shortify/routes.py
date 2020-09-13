@@ -8,6 +8,6 @@ def routes(app, module_config):
     view = ViewsHandler(app)
 
     router.add_get(url_maker(url_prefix, '/'), view.index, name='index')
-    router.add_get(url_maker(url_prefix, '/{short_code}'), view.unshortify, name='unshortify')
+    router.add_get(url_maker(url_prefix, '/{short_code}'), view.longify, name='unshortify')
     router.add_post(url_maker(url_prefix, '/shortify'), view.shortify, name='shortify')
 

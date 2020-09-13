@@ -17,6 +17,11 @@ class ViewsHandler:
 
     @aiohttp_jinja2.template('index.html')
     async def shortify(self, request):
+        """
+        Shortify the input url
+        :param request:
+        :return: Http Response
+        """
         if request.method != 'POST':
             return web.HTTPMethodNotAllowed()
 
@@ -30,7 +35,12 @@ class ViewsHandler:
         return {'short_code': short_code}
 
     @aiohttp_jinja2.template('index.html')
-    async def unshortify(self, request):
+    async def longify(self, request):
+        """
+        Based on the short url that user call, this view will return back the raw url
+        :param request:
+        :return: Http Response
+        """
         short_code = request.match_info['short_code']
         url = await longify_url(self._app['redis'], self._redis_prefix, short_code)
 

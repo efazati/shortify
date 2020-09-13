@@ -12,4 +12,9 @@ class ViewsHandler:
         self._redis_prefix = app['config']['redis']['prefix']
 
     async def healthz(self, request):
+        """
+        If our app is working, it will return a json response with status code 200
+        :param request:
+        :return:
+        """
         return web.json_response({"status": "healthy"})

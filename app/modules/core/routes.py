@@ -7,4 +7,3 @@ def routes(app, module_config):
     router = app.router
     view = ViewsHandler(app)
     router.add_get(url_maker(url_prefix, '/healthz'), view.healthz, name='healthz')
-

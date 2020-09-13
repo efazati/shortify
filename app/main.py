@@ -14,7 +14,7 @@ log = logging.getLogger(__name__)
 
 async def create_app(config):
     """
-    Init all dependencies and put their instances in app object
+    Init all dependencies and put their instances in the main app object (web.Application)
     :param config: object
     :param envs: object
     :return: app
@@ -32,6 +32,11 @@ async def create_app(config):
 
 
 async def configure_redis(app):
+    """
+    Create a connection to redis server
+    :param app:  web.Application
+    :return: Redis pool
+    """
     redis_port = os.environ.get('REDIS_PORT', None) or app['config']['redis']['port']
     redis_host = os.environ.get('REDIS_HOST', None) or app['config']['redis']['host']
     pool = await aioredis.create_redis_pool((redis_host, redis_port))
@@ -60,6 +65,11 @@ async def configure_modules(app):
 
 
 async def configure_jinja(app):
+    """
+    Configure Jinja for rendering HTML
+    :param app: web.Application
+    :return:
+    """
     aiohttp_jinja2.setup(
         app,
         loader=jinja2.PackageLoader('app'),
@@ -67,6 +77,11 @@ async def configure_jinja(app):
 
 
 async def configure_logging(app):
+    """
+    Configure simple logging system and attach the logger to the main app object (web.Application)
+    :param app: web.Application
+    :return:
+    """
     log_level = app['config']['log_level']
     logging.basicConfig()
 
