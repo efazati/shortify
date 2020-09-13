@@ -51,6 +51,7 @@ project/media/temp/*
 # Virtualenv
 venv/
 env/
+.env/
 *.apk
 # pycharm
 .idea*
