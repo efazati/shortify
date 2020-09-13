@@ -3,7 +3,7 @@ import re
 from aiohttp import web
 
 
-def is_url_valid(url):
+def is_url_valid(url: str) -> bool:
     regex = re.compile(
         r'^https?://'  # http:// or https://
         r'(?:(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+[A-Z]{2,6}\.?|'  # domain...
@@ -14,10 +14,7 @@ def is_url_valid(url):
     return url is not None and regex.search(url)
 
 
-def url_maker(url_prefix, path):
+def url_maker(url_prefix: str, path: str) -> str:
     if url_prefix:
         return ''.join([url_prefix, path])
     return path
-
-def healthy(request):
-    return web.json_response({"status": "healthy"})

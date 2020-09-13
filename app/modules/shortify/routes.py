@@ -2,7 +2,7 @@ from .views import ViewsHandler
 from app.utils.url import url_maker
 
 
-def routes(app, module_config):
+def routes(app: object, module_config: dict):
     url_prefix = module_config.get('url_prefix', None)
     router = app.router
     view = ViewsHandler(app)

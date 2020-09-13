@@ -1,8 +1,13 @@
 import aiohttp_jinja2
 from aiohttp import web
+from prometheus_async.aio import time
+from prometheus_client import Histogram
 
 from app.modules.shortify.models import shortify_url, longify_url
 from app.utils.url import is_url_valid
+
+SHORT_REQ_TIME = Histogram("req_time_seconds_shotify", "time spent in requests")
+LONG_REQ_TIME = Histogram("req_time_seconds_longify", "time spent in requests")
 
 
 class ViewsHandler:
@@ -15,6 +20,7 @@ class ViewsHandler:
     async def index(self, request):
         return {}
 
+    @time(SHORT_REQ_TIME)
     @aiohttp_jinja2.template('index.html')
     async def shortify(self, request):
         """
@@ -34,6 +40,7 @@ class ViewsHandler:
         short_code = await shortify_url(self._app['redis'], self._redis_prefix, url)
         return {'short_code': short_code}
 
+    @time(LONG_REQ_TIME)
     @aiohttp_jinja2.template('index.html')
     async def longify(self, request):
         """

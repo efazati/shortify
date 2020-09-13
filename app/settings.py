@@ -1,3 +1,4 @@
+import os
 import pathlib
 
 import yaml
@@ -27,8 +28,10 @@ def load_envs():
     Add some envs details for components that needs these environments variables
     :return:
     """
+    POD_NAME = os.environ.get('POD_NAME', 'pod')
     return {
         "PROJECT_ROOT": PROJECT_ROOT,
         "APP_ROOT": APP_ROOT,
-        "TEMPLATES_ROOT": TEMPLATES_ROOT
+        "TEMPLATES_ROOT": TEMPLATES_ROOT,
+        "POD_NAME": POD_NAME
     }

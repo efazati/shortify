@@ -10,7 +10,7 @@ import re
 import short_url
 
 
-async def shortify_url(redis, redis_prefix, url):
+async def shortify_url(redis: object, redis_prefix: str, url: str) -> str:
     """
     Get URL and store that in Redis, based on the count, it will generate a short srting and give that to user for later requests.
     :param redis: object redis
@@ -41,7 +41,7 @@ async def shortify_url(redis, redis_prefix, url):
     return short_code
 
 
-async def longify_url(redis, redis_prefix, short_code):
+async def longify_url(redis: object, redis_prefix: str, short_code: str) -> str:
     """
 
     :param redis: object redis

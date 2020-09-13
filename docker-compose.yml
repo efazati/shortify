@@ -6,7 +6,7 @@ services:
       context: .
       dockerfile: Dockerfile
     volumes:
-      - "./app:/app"
+      - "./app:/project/app"
     environment:
       - REDIS_HOST=redis
     links:
@@ -20,9 +20,11 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    volumes:
+      - "./app:/project/app"
     environment:
       - REDIS_HOST=redis_test
-    command: ["python3", "-m", "tests/test.py"]
+    command: ["pytest", "tests/tests.py"]
 
   redis_test:
     image: redis:6.0

@@ -16,7 +16,7 @@ spec:
         app: shortify
     spec:
       containers:
-        - name: insights-api
+        - name: shortify
           image: shortify:latest
           imagePullPolicy: IfNotPresent
           ports:
@@ -25,6 +25,11 @@ spec:
           envFrom:
             - configMapRef:
                 name: shortify-env-vars
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
           livenessProbe:
             httpGet:
               path: /core/healthz/

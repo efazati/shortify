@@ -5,9 +5,9 @@ import aiohttp_jinja2
 import aioredis
 import jinja2
 from aiohttp import web
+from prometheus_async import aio
 
 from app.settings import load_config, load_envs
-from app.utils.url import healthy
 
 log = logging.getLogger(__name__)
 
@@ -26,7 +26,6 @@ async def create_app(config):
     await configure_redis(app)
     await configure_jinja(app)
     await configure_logging(app)
-    await configure_static(app)
 
     return app
 
@@ -95,12 +94,6 @@ async def configure_logging(app):
     http_logger = logging.getLogger("aiohttp.client")
     http_logger.setLevel(logging.DEBUG)
     http_logger.propagate = True
-
-
-async def configure_static(app):
-    app.router.add_static(
-        '/static/', path=str(app['envs']['APP_ROOT'] / 'static'),
-        name='static')
 
 
 def run(config_path=None):
