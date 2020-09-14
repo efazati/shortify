@@ -5,14 +5,13 @@ import aiohttp_jinja2
 import aioredis
 import jinja2
 from aiohttp import web
-from prometheus_async import aio
 
 from app.settings import load_config, load_envs
 
 log = logging.getLogger(__name__)
 
 
-async def create_app(config):
+async def create_app(config: dict) -> object:
     """
     Init all dependencies and put their instances in the main app object (web.Application)
     :param config: object
@@ -30,7 +29,7 @@ async def create_app(config):
     return app
 
 
-async def configure_redis(app):
+async def configure_redis(app: object) -> object:
     """
     Create a connection to redis server
     :param app:  web.Application
@@ -49,7 +48,7 @@ async def configure_redis(app):
     return pool
 
 
-async def configure_modules(app):
+async def configure_modules(app: object):
     """
     Based on what is defined in config, this function will load modules.
     :param app:
@@ -63,7 +62,7 @@ async def configure_modules(app):
         module.routes(app, module_config)
 
 
-async def configure_jinja(app):
+async def configure_jinja(app: object):
     """
     Configure Jinja for rendering HTML
     :param app: web.Application
@@ -75,7 +74,7 @@ async def configure_jinja(app):
     )
 
 
-async def configure_logging(app):
+async def configure_logging(app: object):
     """
     Configure simple logging system and attach the logger to the main app object (web.Application)
     :param app: web.Application
@@ -96,7 +95,7 @@ async def configure_logging(app):
     http_logger.propagate = True
 
 
-def run(config_path=None):
+def run(config_path: str = None):
     config = load_config(config_path)
     app = create_app(config)
     web.run_app(app, port=config['port'])

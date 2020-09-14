@@ -6,7 +6,7 @@ from prometheus_client import Histogram
 from app.modules.shortify.models import shortify_url, longify_url
 from app.utils.url import is_url_valid
 
-SHORT_REQ_TIME = Histogram("req_time_seconds_shotify", "time spent in requests")
+SHORT_REQ_TIME = Histogram("req_time_seconds_shortify", "time spent in requests")
 LONG_REQ_TIME = Histogram("req_time_seconds_longify", "time spent in requests")
 
 
